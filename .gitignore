@@ -1,0 +1,46 @@
+# ============================================
+# SECRETS & CREDENTIALS (NEVER COMMIT)
+# ============================================
+.env
+.env.local
+.env.*.local
+secrets.txt
+api_keys.json
+credentials/
+
+# ============================================
+# LOCAL CONFIGURATION
+# ============================================
+config.local.json
+settings.local.yml
+
+# ============================================
+# DEPENDENCIES & BUILD ARTIFACTS
+# ============================================
+node_modules/
+.venv/
+__pycache__/
+dist/
+build/
+*.egg-info/
+
+# ============================================
+# IDE & EDITOR FILES
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ============================================
+# OS FILES
+# ============================================
+.DS_Store
+Thumbs.db
+
+# ============================================
+# LOCAL TEST/DEBUG FILES
+# ============================================
+test-data/
+my-notes.txt
+debug-logs/

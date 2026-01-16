@@ -1,0 +1,17 @@
+ipykernel
+ipython
+pandas 
+numpy == 1.26
+matplotlib
+scikit-learn
+seaborn
+jupyterlab
+torch ==2.8.0
+torchvision ==0.23.0
+torchaudio ==2.8.0
+torchtext ==0.18.0
+transformers==4.42.1
+tensorflow
+sentencepiece
+nltk
+spacy == 3.8.6
