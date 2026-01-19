@@ -106,5 +106,16 @@ will generate two objects
 where the second list are the unique indices
 
 ## Data Loaders
-A Data Loader is a tool that facilitates the process of prepare and load data for the training of GenAI Models
-facilitating batching and shuffling of data, memry optimization, integration with other libraries and or training pipelines and so on.
+A Data Loader is a tool that facilitates the process of prepare and load data for the training of GenAI Models facilitating batching and shuffling of data, memory optimization, integration with other libraries and or training pipelines and so on. 
+
+In the Pytorch framework we work with datasets: in general we want to separate training, test and validation sets. By using dataloaders we can load data in batches rather than one at the time, this allows shuffling as well before batching data. Shuffling is particularly important when working with Deep Learning Models as we want to avoid the model to learn patterns based on order.
+
+## Data Quality and Diversity for Training
+
+data quality refers to the accuracy and consistency of the data used to train the model. techniques in that area are:
+
+* Noise reduction: removal of noisy data is useful to have the model learn relevant patterns
+* Consistency checks: prevent the model to learn from false or outdated data
+* Labeling quality: prevent the model to learn from mislabeled data
+
+Diverse representation is also relevant when training a model, accounting for diversified demographics, balanced data sources and variety is crucial in reducing bias.
