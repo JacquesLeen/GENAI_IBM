@@ -41,6 +41,7 @@ Different Archtiectures require different training approaches
 Reinforcement Learning techniques are in general heavily used to maximize rewards from a correct interaction with the environment for the Model.
 
 ## GenAI for NLP
+
 GenAI can do a lot in terms of its utilization of Natural Language. It can:
 
 * Comperehend Natural Language
