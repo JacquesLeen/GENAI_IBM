@@ -75,4 +75,20 @@ Embedding is a way to encode words as numbers but still preserve meaning. The id
 - King - Queen
 - Man - Woman
 
-In this
+In this case the relationship that is between King and Queen is kind of the same as Man and Woman. In a sense 
+
+$$
+\text{King - Man + Woman = Queen}
+$$
+
+which is the same as representing them as vectors 
+![alt text](03438.jpg)
+
+If vectors are close then the words have similar meaning, otherwise they will sit far away from each other. each dimension capture a feature of the word. And with many dimensions involved one can capture word relationships far better then in the previously seen cases. Embeddings is a technique of distributed representation in that it distributes the meaning of a word across different dimensions. A potential representatioon of the example that we have just seen could be
+
+- King = $[0.12, 0.6, 0.43, 0.76]$
+- Queen = $[0.34, 0.58, 0.46, 0.8]$
+- Man = $[0.15, 0.97, 0.21, 0.18]$
+- Woman = $[0.15, 0.97, 0.21, 0.18]$
+
+there are different techniques and algorithm for embeddings such as Word2Vec GloVe or FastText
