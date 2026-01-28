@@ -106,8 +106,156 @@ GD calcualtes now the derivatives of $L$ with respect to every parameter (in our
 
  $$
 w_1 = w_0 - \alpha \frac{\partial{L}}{dw} \\
- \\ 
+ \\ ------- \\ 
 b_1 = b_0 - \alpha \frac{\partial{L}}{db}
  $$
 
-where $\alpha$ is the learning rate of the algorithm. The algorithm continues until convergence  s
+where $\alpha$ is the learning rate of the algorithm. The algorithm continues until convergence
+
+The general formula, given $w_0, \dots w_k = \mathbf{W}$ weights for the expression $y = w_0 + \sum_{i=1}^{k} w_i \cdot x_i$ will be
+
+$$
+\text{repeat until convergence} \\
+
+\{ w_i := w_i - \alpha \cdot \frac{\partial L(\mathbf{W})}{\partial w_i} \\ 
+\text{for every } i \text{ in } (0,k) \}
+$$
+
+### Backpropagation
+
+back to our NN. we have seen how they work and how to make a prediction when we already have determined the best parameters. But how do we determine those parameters in the first place?
+
+![alt text](../pics/weights.png)
+
+for the moment we can just focus on $b_3$ and see al the main ideas, and assume that we already have the best estimation for all parameters other than $b_3$. We will see afterwards how to generalize to multiple variables.
+
+![alt text](../pics/all_weights_but_one.png)
+
+Plugging in the values for the input (lets assume between 0 and 1 fir simplicity) into the top and bottom branch of the nn we are able to determine partial results up to the point when we have to plug in $b_3$
+
+
+ $$ 
+  f(x) = w_3 \cdot \text{Softmax}(w_1 \cdot x + b_1) + w_4 \cdot \text{Softmax}(w_2 \cdot x + b_2) + b_3  = y\\
+ f(x) = (-1.22) \cdot \text{Softmax}(3.34 \cdot x + -1.43)+ (-2.30) \cdot \text{Softmax}(-3.53 \cdot x + 0.57) + b_3
+ $$
+
+the first step is to give a random value to $b_3$, lets say 0. Then we evaluate the sum of the square residuals for the predictions when $b_3 = 0$. Lets consider this trivial usecase (in blue you have the observed data and in green $f(x, b_3=0)$)
+
+![alt text](../pics/simple_ds_residuals.png)
+
+$$
+f(0,b_3=0) = -2.6 \\
+f(0.5, b_3=0) = -1.61 \\
+f(1,b_3=0) = -2.61 \\
+------------\\
+L= (0+2.6)^2 + (1+ 1.61)^2 + (0+2.61)^2 = 20.4
+$$
+
+we can now apply GD. we compute the derivative of $L$ with respect to $b_3$
+
+$$
+\frac{dL}{db_3} = \frac{dL}{dy} \cdot \frac{dy}{db_3} \\
+\frac{dL}{dy} = -2 \sum_{i=1}^{k} \hat{y}_i -y_i \\
+\frac{dy}{db_3} = 1 \\
+\frac{dL}{db_3} = -2 \sum_{i=1}^{k} \hat{y}_i -y_i
+$$
+
+we can now evaluate the gradient in our case
+
+$$
+\frac{dL}{db_3} = - 2 \cdot [(0 + 2.6) + (1+1.61) + (2.61)] = -15.7
+$$
+
+and plug it in the GD equation (assume $\alpha = 0.1$)
+
+$$
+b_3 := 0 - 0.1 \cdot(-15.7) = 1.57
+$$
+
+we have substituted our random initialized $b_3$ with a new value. We now calcualte
+
+$$
+f(0,b_3=1.57) = -1.03 \\
+f(0.5, b_3=1.57) = -0.03 \\
+f(1,b_3=1.57) = -1.04 \\
+$$
+
+and the new Loss function accordingly. It is not a necessary step but it helps understand that $L$ gets smaller. Even better we can compute the gradient
+
+$$
+\frac{dL}{db_3} = - 2 \cdot [(0 + 1.03) + (1+0.03) + (0+1.04)] = -6.26
+$$
+
+and update $b_3$ again:
+$$
+b_3 := 1.57 - 0.1 \cdot(-6.26) = 2.19
+$$
+
+this will reach convergence at the optimal value of $b_3$.
+
+LEt'S complicate the scenario and imagine that we want to optimize many params as one, namely $w_3, w_4, b_3$.
+
+![alt text](../pics/optimize_many_params.png)
+
+the procedure is similar. We start by initializing $w_3, w_4, b_3$ picking the first two from a uniform distribution and as we did before $b_3 = 0$. Let's say $w_3 = 0.36, w_4 =0.63, b_3=0$
+
+ $$
+  f(x) = w_3 \cdot \text{Softmax}(w_1 \cdot x + b_1) + w_4 \cdot \text{Softmax}(w_2 \cdot x + b_2) + b_3  = y\\
+ f(x) = w_3 \cdot \text{Softmax}(3.34 \cdot x + -1.43)+ w_4 \cdot \text{Softmax}(-3.53 \cdot x + 0.57) + b_3
+ $$
+
+ and as we did before we compute the Loss function
+
+$$
+f(0, w_3 = 0.36, w_4=0.63,b_3=0) = 0.72 \\
+f(0.5, w_3 = 0.36, w_4=0.63,b_3=0) = 0.46 \\
+f(1, w_3 = 0.36, w_4=0.63,b_3=0) = 0.77 \\
+------------\\
+L= (0 -0.72)^2 + (1 - 0.46 )^2 + (0 - 0.77)^2 = 1.4
+$$
+
+now we apply gradient descent, and this is where stuff is slightly different. We no longer only evaluate the derivative with respect to $b_3$ but we compute the partial derivatives with resoect to $w_3, w_4, b_3$
+
+$$
+\frac{\partial L}{\partial b_3} = -2 \sum_{i=1}^{k} \hat{y}_i -y_i \\
+-----\\
+\frac{\partial L}{\partial w_3} =\frac{\partial}{\partial w_3} \sum_{i=1}^{n} (\hat{y}_i -  w_3 \cdot \text{Softmax}(3.34 \cdot x + -1.43)+ w_4 \cdot \text{Softmax}(-3.53 \cdot x + 0.57) + b_3 )^2\\
+-----\\
+\frac{\partial L}{\partial w_4} = \frac{\partial}{\partial w_4} \sum_{i=1}^{n} (\hat{y}_i -  w_3 \cdot \text{Softmax}(3.34 \cdot x_i + -1.43)+ w_4 \cdot \text{Softmax}(-3.53 \cdot x_i + 0.57) + b_3 )^2
+$$
+
+the last two are a bit ugly but can be solved using the chain rule, by calling
+
+$$
+y_{1,i} = \text{Softmax}(3.34 \cdot x_i + -1.43) \text{ because this is the output of the first node} \\
+y_{2,i} = \text{Softmax}(-3.53 \cdot x_i + 0.57) \text{ because this is the output of the second node} \\
+$$
+
+then 
+
+$$
+\frac{\partial L}{\partial w_3} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial w_3} = -2 \sum_{i=1}^{k} (\hat{y}_i -y_i) \cdot y_{1,i} \\
+-----\\
+\frac{\partial L}{\partial w_4} = \frac{\partial L}{\partial y} \cdot \frac{\partial y}{\partial w_4} = -2 \sum_{i=1}^{k} (\hat{y}_i -y_i) \cdot y_{2,i} \\
+$$
+
+and we can plug the results into gradient descent (one just needs to do the math)
+
+
+$$
+\frac{\partial L}{\partial w_3} = -2 \cdot \big[ (0-0.72)\cdot 0.21 + (1-0.46) \cdot 0.82 + (0-0.77) \cdot 2.04 \big] = 2.58 \\
+\frac{\partial L}{\partial w_4} = 1.26 \\
+\frac{\partial L}{\partial b_3} = 1.90
+$$
+
+and assuming a $\alpha = 0.1 $ we have
+
+$$
+w_3 := 0.36 -0.1 \cdot 2.58 = 0.1 \\
+w_4 := 0.63 -0.1 \cdot 1.26 = 0.5 \\
+b_3 := 0 -0.1 \cdot 1.90 = -0.19
+$$
+
+and we now repeat until convergence.
+
+The general form of GD optimizes all params at once, the derivative become even more ugly and you'll have a partial derivative to compute for every weight and every bias, but the math is the same.
