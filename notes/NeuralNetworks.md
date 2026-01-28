@@ -14,7 +14,7 @@ fitting a strainght line to the data to make prediction will not work, but with 
 
 ![alt text](../pics/Complicated_data.png)
 
-Lets assume for now that the best values of the NN are already determined and we just see how they work within the NN. 
+Lets assume for now that the best values of the NN are already determined and we just see how they work within the NN.
 
 The NN works by summing and multiplying specific curves known as activation functions in this context. The most common examples are
 
@@ -56,4 +56,58 @@ Lets assume that we now have an input for our NN $x_1 = 0$. we go through the br
 
  ![alt text](../pics/fit.png)
 
- $$ f(x) = (-1.3) \cdot (\text{Softmax}(-34.4 \cdot x + 2.14)) + (2.28) \cdot (\text{Softmax}(-2.52 \cdot x + 1.29)) -0.58
+ $$ f(x) = (-1.3) \cdot (\text{Softmax}(-34.4 \cdot x + 2.14)) + (2.28) \cdot (\text{Softmax}(-2.52 \cdot x + 1.29)) -0.58$$
+
+## Back Propagation
+
+ The process of setting the weights and biases for the NN is called back propagation. Teh basis step for understanding it is to get into the chain rule
+
+### Chain Rule
+
+given a function $y = f(x)$ and a function $h = g(y)$ you can write the derivative $\frac{dg}{dx}$ as
+
+ $$\frac{dg}{dx} = \frac{dg}{dy} \cdot \frac{dy}{dx} $$
+
+
+### Chain Rule and Loss Function
+
+The loss function $L$ measures the difference between predicted values and correct values and applies to NN as well. Most of the time it is not just the residuals but rather a function of those (such as square of the residual). Given that the NN works by triggering activation functions its Loss can also be expressed in a composite form
+
+ $$z(w,b) = w \cdot x + b \text{ expresses the linear pass that we apply to the input}$$
+ $$a(z) \text{ is the activation function} $$
+ $$L(a) = L(w , b) = L(a(w \cdot x + b)) \text{ is the Loss function in terms of w and b}$$
+
+Then we can apply the chain rule to see how the Loss function changes in terms of $w,b$
+
+ $$\frac{\partial L}{\partial w} = \frac{\partial L}{\partial a} \cdot \frac{\partial a}{\partial z} \cdot \frac{\partial z}{\partial w}$$
+  $$\frac{\partial L}{\partial b} = \frac{\partial L}{\partial a} \cdot \frac{\partial a}{\partial z} \cdot \frac{\partial z}{\partial b}$$
+
+This application unlocks the possibility to perform Gradient Descent which is the main algorothm for parameter estimation in Backpropagation.
+
+### Gradient Descent
+
+The process of estimating the best parameters $w,b$ for our NN is a linear regression problem, indeed we are optimizing
+
+$$y(w,b) = w \cdot x + b$$
+
+over and over again. Gradient Descent is a very general way to find optimization soutions.
+
+Given a set of input values $x_1, \dots, x_k$ and the form of a generic line we can set random values for $w,b$ called $w_0$ and $b_0$. Given that set of values for each $x_i$ we calcualte the predicted value $\hat{y}_i$ and compare it with the actual value $y_i$
+
+$$ L = \sum_{i=1}^{n} (\hat{y}_i -y_i)^2$$
+
+the goal of GD is to find the minimum value of $L$. The best parameters for fitting will be the $w_k b_k$ associated to that $L$ function 
+
+GD calcualtes now the derivatives of $L$ with respect to every parameter (in our simplifies case $w$ and $b$) and builds the so called gradient vector
+
+ $$\nabla L = \left[2 \sum_{i=1}^{n} (\hat{y}i -y_i) * x_i, \quad 2 \sum_{i=1}^{n} (\hat{y}_i -y_i)\right]$$
+
+ which looks a generic espression but is actually a vector of numbers, the update of the weights now happens through the expression
+
+ $$
+w_1 = w_0 - \alpha \frac{\partial{L}}{dw} \\
+ \\ 
+b_1 = b_0 - \alpha \frac{\partial{L}}{db}
+ $$
+
+where $\alpha$ is the learning rate of the algorithm. The algorithm continues until convergence  s
