@@ -258,4 +258,4 @@ $$
 
 and we now repeat until convergence.
 
-The general form of GD optimizes all params at once, the derivative become even more ugly and you'll have a partial derivative to compute for every weight and every bias, but the math is the same.
+The general form of GD optimizes all params at once, the derivatives become even more ugly and you'll have a partial derivative to compute for every weight and every bias, but the math is the same.
