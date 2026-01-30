@@ -91,4 +91,45 @@ If vectors are close then the words have similar meaning, otherwise they will si
 - Man = $[0.15, 0.97, 0.21, 0.18]$
 - Woman = $[0.15, 0.97, 0.21, 0.18]$
 
-there are different techniques and algorithm for embeddings such as Word2Vec GloVe or FastText
+there are different techniques and algorithm for embeddings such as Word2Vec GloVe or FastText.
+
+## Document Categorization and Learnig
+
+Document classification analyses the text content and provides as output the category of the text that was fed to it. The way it works is by leveraging NN to ingest the data, apply embeddings if necessary and then decide which category is most fitting for the test.
+
+In general a neural network $\theta$ can be described in terms of
+
+$$
+\theta = \{\mathbf{W}^{[1]},\mathbf{b}^{[1]}, \dots, \mathbf{W}^{[n]},\mathbf{b}^{[n]}\}
+$$
+
+where $n$ is the number of layers. and given a loss function $L$ the goal of the training process is to find
+
+$$
+\hat{\theta} = \text{argmin}_{\theta} L(\theta)
+$$
+
+Consider the following scenario, you have a vector which represents a text passed through bag of words algorithm $[x_1, \dots x_k], \; x_i = \{0,1\}$ and you pass it through a NN to determine to which category the text refers to. the NN will produce an output layer $[y_1,\dots, y_m]$ of logits (log of the odds) for the $m$ categories. The probability for each category $j$ can be determined as
+
+$$
+p_j = \frac{\exp(y_j)}{\sum_{l=1}^{m} \exp(y_l)}
+$$
+
+this gives you a vector of probabilities $[p_1, \dots, p_m]$. This can be confronted with the actual values through Cross-Entropy Loss
+
+$$
+\mathcal{L} = - \sum_{l=1}^m \hat{y_l} \cdot \ln (p_l)
+$$
+
+where only one of the $\hat{y_l} = 1$ and the rest is $0$. That means that in our calculation only one term will not be 0 and the sum reduces to $-\ln(p_j)$ where $j$ is the index such as $\hat{y}_j = 1$. I can now apply GD with cross entropy loss as loss function. The derivative becomes pretty elegant
+
+$$
+\frac{\partial \mathcal{L}}{\partial w_i}  = \sum_l \frac{\partial \mathcal{L}}{\partial p_l} \cdot \frac{\partial p_l}{\partial y_l} \cdot \frac{\partial y_l}{\partial w_i}  = \\
+= \sum_l -\frac{1}{p_l} \cdot p_l \cdot (1-p_l) \cdot \frac{\partial y_l}{\partial w_i}
+$$
+
+where $l$ identifies the potential classes. Hence
+
+$$
+w_i := w_i - \alpha \cdot (p_l - \hat{y}_l) \cdot \frac{\partial \mathcal{y_i}}{\partial w_i}
+$$
