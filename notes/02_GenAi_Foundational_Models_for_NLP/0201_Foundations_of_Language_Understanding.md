@@ -133,3 +133,34 @@ where $l$ identifies the potential classes. Hence
 $$
 w_i := w_i - \alpha \cdot (p_l - \hat{y}_l) \cdot \frac{\partial \mathcal{y_i}}{\partial w_i}
 $$
+
+
+## N-Grams
+
+consider a phrase such as "I like vacations" this can be represented with the mapping $\{ \omega_1, \omega_2, \omega_3 \}$ which are the mapping of $\{\text{I, like, vacations}\}$.
+
+The Bi-gram model works calculating the probability of $\omega_3$ given that $\omega_2$ was some word $P(\omega_3 | \omega_2)$. The idea is that we provide context and according to that we fill in the value. The idea behind it is that if you have a table like the following
+
+| $\omega_1$ | $\omega_2$ | $\omega_3$ |
+|------------|------------|------------|
+|I|like|vacations|
+|I|hate|surgery|
+
+the model given this set of sentences recognizes that "like" is never followed by surgery, hence $P(\omega_3 = \text{surgery} | \omega_2 =\text{like}) = 0$. Of course this model can be extended to broader form of context such as for example Tri-gram
+
+| $\omega_1$ | $\omega_2$ | $\omega_3$ |
+|------------|------------|------------|
+|Surgeons|like|surgery|
+|I|hate|surgery|
+|...|...|...| 
+
+in this case the model catches two words as context and calculates $P(\omega_3 | \omega_1,\omega_2)$
+
+In n-grams given a table such as the one above and a vocabulary build from this table we choose to fill a word with
+
+$$ \text{argmax}_{\omega_k} P(\omega_k | \omega_{k-1} \dots \omega_{k-n})$$
+
+This gets complicated when the vocabulary is big but we can leverage NN to estimate the probabilties. We let the input go through an embedding layer
+
+$$["the", "quick", "brown", "fox"]$$
+
