@@ -162,5 +162,26 @@ $$ \text{argmax}_{\omega_k} P(\omega_k | \omega_{k-1} \dots \omega_{k-n})$$
 
 This gets complicated when the vocabulary is big but we can leverage NN to estimate the probabilties. We let the input go through an embedding layer
 
-$$["the", "quick", "brown", "fox"]$$
+$$[\text{the, quick, brown, fox}] \rightarrow \begin{bmatrix}
+                0.2, -0.5, 0.8\\\
+                0.1,  0.3, -0.2\\\
+                -0.4, 0.6, 0.1\\\
+                0.5, -0.3, 0.9
+\end{bmatrix} = \rightarrow \begin{bmatrix}
+                \omega_1\\\
+                \omega_2\\\
+                \omega_3\\\
+                \omega_4
+\end{bmatrix} = \mathbf{\Omega}$$
 
+the embedded input then goes through a hidden layer or hidden layers such as
+
+$$ \mathbf{h} = \text{ReLU}( \mathbf{w} \cdot \mathbf{\Omega} + \mathbf{b})$$
+
+once we are done with the hidden layers we pass through a output layer that contains one node for each word of the vocabulary
+
+$$ \text{logit} = \mathbf{w}_{out} \cdot \mathbf{h} + \mathbf{b}_{out}$$
+
+and we apply softmax to get probabilities from logits
+
+$$ P(\omega_i | \mathbf{\Omega}) = \frac{\exp(\text{logit}_i)}{\sum_j \exp(\text{logit}_j)}$$
